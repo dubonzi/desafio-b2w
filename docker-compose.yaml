@@ -1,0 +1,18 @@
+version: "3.1"
+
+services:
+  b2w_db:
+    container_name: b2w_db
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - b2w_network
+    volumes:
+      - b2w_db:/data/db
+
+networks:
+  b2w_network:
+volumes:
+  b2w_db:
