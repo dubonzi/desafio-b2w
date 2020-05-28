@@ -26,6 +26,7 @@ func SendError(w http.ResponseWriter, err error) error {
 		hte = service.ErrInternal
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(hte.Status)
 	encoder := json.NewEncoder(w)
 	return encoder.Encode(hte)
 }
