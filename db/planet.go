@@ -20,8 +20,9 @@ func NewPlanetDB() PlanetDB {
 }
 
 // List lists planets.
-func (p PlanetDB) List() ([]model.Planet, error) {
-	cursor, err := p.collection.Find(context.Background(), bson.D{{}})
+func (p PlanetDB) List(name string) ([]model.Planet, error) {
+	filter := bson.M{"name": bson.M{"$regex": ".*" + name + ".*"}}
+	cursor, err := p.collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
 	}

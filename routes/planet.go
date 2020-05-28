@@ -17,9 +17,9 @@ func planets() chi.Router {
 }
 
 func listAllPlanetsHandler(w http.ResponseWriter, r *http.Request) {
-
+	name := r.URL.Query().Get("name")
 	plService := service.PlanetService{}
-	planets, err := plService.List()
+	planets, err := plService.List(name)
 	if err != nil {
 		rest.SendError(w, err)
 		return

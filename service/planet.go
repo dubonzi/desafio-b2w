@@ -10,10 +10,10 @@ import (
 type PlanetService struct{}
 
 // List lists planets with an optional name filter.
-func (PlanetService) List() ([]model.Planet, error) {
+func (PlanetService) List(name string) ([]model.Planet, error) {
 	// TODO: Add filter
 	plDB := db.NewPlanetDB()
-	planets, err := plDB.List()
+	planets, err := plDB.List(name)
 	if err != nil {
 		logger.Error("PlanetService.List", "plDB.List", err)
 		return nil, ErrInternal
