@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"teste-b2w/db"
@@ -9,6 +10,7 @@ import (
 	"teste-b2w/model"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // PlanetService is the service layer structure that hold methods related to the Planet entity.
@@ -38,6 +40,9 @@ func (PlanetService) FindByID(id string) (model.Planet, error) {
 	plDB := db.NewPlanetDB()
 	planet, err := plDB.FindByID(oID)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return model.Planet{}, ErrNotFound
+		}
 		logger.Error("PlanetService.FindByID", "plDB.FindByID", err, oID)
 		return model.Planet{}, ErrInternal
 	}
@@ -46,8 +51,6 @@ func (PlanetService) FindByID(id string) (model.Planet, error) {
 }
 
 // Add adds a new planet.
-//
-// Must be a valid planet from the Star Wars universe.
 func (ps PlanetService) Add(planet model.Planet) (model.Planet, error) {
 	if planet.Name == "" {
 		return model.Planet{}, ErrEmptyName
@@ -89,6 +92,25 @@ func (ps PlanetService) Add(planet model.Planet) (model.Planet, error) {
 	}
 
 	return planet, nil
+}
+
+// Delete removes a planet from the database.
+func (PlanetService) Delete(id string) error {
+	oID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ErrInvalidID
+	}
+	plDB := db.NewPlanetDB()
+	err = plDB.Delete(oID)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return ErrNotFound
+		}
+		logger.Error("PlanetService.Delete", "plDB.Delete", err, oID)
+		return ErrInternal
+	}
+
+	return nil
 }
 
 func (PlanetService) getFilmAppearances(name string) (int, error) {

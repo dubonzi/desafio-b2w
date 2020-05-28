@@ -21,6 +21,8 @@ var (
 	ErrInternal = &HTTPError{Status: http.StatusInternalServerError, Code: "internal_server_error", Message: "An unexpected internal server error occurred."}
 	// ErrBadRequest represents a generic bad request error.
 	ErrBadRequest = &HTTPError{Status: http.StatusBadRequest, Code: "bad_request", Message: "The information sent was in an invalid format."}
+	// ErrNotFound represents a not found error.
+	ErrNotFound = &HTTPError{Status: http.StatusNotFound, Code: "not_found", Message: "The requested resource was not found."}
 
 	// ErrInvalidID represents an invalid ID error.
 	ErrInvalidID = &HTTPError{Status: http.StatusBadRequest, Code: "invalid.id", Message: "The given ID is invalid."}

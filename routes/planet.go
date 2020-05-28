@@ -16,6 +16,7 @@ func planets() chi.Router {
 	r.Get("/", listAllPlanetsHandler)
 	r.Get("/{id}", findPlanetByIDHandler)
 	r.Post("/", newPlanetHandler)
+	r.Delete("/{id}", deletePlanetHandler)
 
 	return r
 }
@@ -60,4 +61,14 @@ func newPlanetHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	rest.SendJSON(w, planet)
+}
+
+func deletePlanetHandler(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	plService := service.PlanetService{}
+	err := plService.Delete(id)
+	if err != nil {
+		rest.SendError(w, err)
+		return
+	}
 }

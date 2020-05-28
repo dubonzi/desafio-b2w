@@ -77,3 +77,8 @@ func (p PlanetDB) FindByID(id primitive.ObjectID) (model.Planet, error) {
 	var planet model.Planet
 	return planet, result.Decode(&planet)
 }
+
+// Delete deletes a planet.
+func (p PlanetDB) Delete(id primitive.ObjectID) error {
+	return p.collection.FindOneAndDelete(context.Background(), bson.M{"_id": id}).Err()
+}
