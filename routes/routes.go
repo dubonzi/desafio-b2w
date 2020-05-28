@@ -20,5 +20,9 @@ func All() chi.Router {
 	})
 	r.Use(crs.Handler)
 
+	r.Route("/api/", func(r chi.Router) {
+		r.Mount("/planets", planets())
+	})
+
 	return r
 }

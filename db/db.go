@@ -14,11 +14,8 @@ var client *mongo.Client
 
 var mDB *mongo.Database
 
-func getDB() *mongo.Database {
-	if mDB != nil {
-		return mDB
-	}
-
+// Open creates the initial connection to the MongoDB instance.
+func Open() {
 	var err error
 	client, err = mongo.NewClient(options.Client().ApplyURI(mongodbURL))
 	if err != nil {
@@ -35,7 +32,15 @@ func getDB() *mongo.Database {
 	if err != nil {
 		log.Fatal("[FATAL] Error testing the connection:", err)
 	}
+}
 
+func getDB() *mongo.Database {
+	if mDB != nil {
+		return mDB
+	}
+	if client == nil {
+		Open()
+	}
 	mDB = client.Database("starwars")
 
 	return mDB
