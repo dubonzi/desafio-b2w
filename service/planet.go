@@ -1,8 +1,8 @@
 package service
 
 import (
-	"log"
 	"teste-b2w/db"
+	"teste-b2w/logger"
 	"teste-b2w/model"
 )
 
@@ -15,8 +15,7 @@ func (PlanetService) List() ([]model.Planet, error) {
 	plDB := db.NewPlanetDB()
 	planets, err := plDB.List()
 	if err != nil {
-		// TODO: Improve logging
-		log.Println("[ERROR] Error listing planets: ", err)
+		logger.Error("PlanetService.List", "plDB.List", err)
 		return nil, ErrInternal
 	}
 

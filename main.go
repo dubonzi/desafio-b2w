@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"teste-b2w/db"
+	"teste-b2w/logger"
 	"teste-b2w/routes"
 )
 
@@ -23,7 +24,7 @@ func main() {
 	go func() {
 		log.Printf("- B2W Planets API v%s -", version)
 		log.Printf("- Listening on port %s -", port)
-		log.Fatal("[FATAL] Error while starting http server: ", server.ListenAndServe())
+		logger.Fatal("main", "server.ListenAndServe", server.ListenAndServe())
 	}()
 
 	<-stop
