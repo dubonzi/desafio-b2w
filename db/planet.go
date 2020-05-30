@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // PlanetDB is a structure to acces 'planet' database records.
@@ -24,7 +25,9 @@ func NewPlanetDB() PlanetDB {
 
 // List lists planets.
 func (p PlanetDB) List() ([]model.Planet, error) {
-	cursor, err := p.collection.Find(context.Background(), bson.M{})
+	cursor, err := p.collection.Find(context.Background(), bson.M{}, &options.FindOptions{
+		Sort: bson.M{"name": 1},
+	})
 	if err != nil {
 		return nil, err
 	}

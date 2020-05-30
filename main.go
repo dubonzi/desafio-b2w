@@ -16,7 +16,7 @@ const version = "0.1.0"
 
 func main() {
 	db.DBName = "starwars"
-	db.DBUrl = "mongodb://localhost:27017/"
+	db.DBUri = "mongodb://localhost:27017/"
 	db.Open()
 	server := http.Server{Addr: port, Handler: routes.All()}
 

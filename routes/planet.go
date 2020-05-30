@@ -13,15 +13,16 @@ import (
 func planets() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", listPlanetsHandler)
-	r.Get("/{id}", findPlanetByIDHandler)
-	r.Post("/", newPlanetHandler)
-	r.Delete("/{id}", deletePlanetHandler)
+	r.Get("/", ListPlanetsHandler)
+	r.Get("/{id}", FindPlanetByIDHandler)
+	r.Post("/", NewPlanetHandler)
+	r.Delete("/{id}", DeletePlanetHandler)
 
 	return r
 }
 
-func listPlanetsHandler(w http.ResponseWriter, r *http.Request) {
+// ListPlanetsHandler handles requests for listing/searching planets.
+func ListPlanetsHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	plService := service.PlanetService{}
 
@@ -40,7 +41,8 @@ func listPlanetsHandler(w http.ResponseWriter, r *http.Request) {
 	rest.SendJSON(w, searchResult)
 }
 
-func findPlanetByIDHandler(w http.ResponseWriter, r *http.Request) {
+// FindPlanetByIDHandler handles requests for finding planets by id.
+func FindPlanetByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	plService := service.PlanetService{}
 	planet, err := plService.FindByID(id)
@@ -51,7 +53,8 @@ func findPlanetByIDHandler(w http.ResponseWriter, r *http.Request) {
 	rest.SendJSON(w, planet)
 }
 
-func newPlanetHandler(w http.ResponseWriter, r *http.Request) {
+// NewPlanetHandler handles requests for inserting new planets.
+func NewPlanetHandler(w http.ResponseWriter, r *http.Request) {
 	var planet model.Planet
 	jDec := json.NewDecoder(r.Body)
 	err := jDec.Decode(&planet)
@@ -70,7 +73,8 @@ func newPlanetHandler(w http.ResponseWriter, r *http.Request) {
 	rest.SendJSON(w, planet)
 }
 
-func deletePlanetHandler(w http.ResponseWriter, r *http.Request) {
+// DeletePlanetHandler handles requests for deleting planets.
+func DeletePlanetHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	plService := service.PlanetService{}
 	err := plService.Delete(id)
