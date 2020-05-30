@@ -2,8 +2,9 @@ package db
 
 import (
 	"context"
+	"desafio-b2w/model"
 	"errors"
-	"teste-b2w/model"
+	"regexp"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,10 +22,9 @@ func NewPlanetDB() PlanetDB {
 	return p
 }
 
-// List lists planets with an optional name filter.
-func (p PlanetDB) List(name string) ([]model.Planet, error) {
-	filter := bson.M{"name": bson.M{"$regex": ".*" + name + ".*"}}
-	cursor, err := p.collection.Find(context.Background(), filter)
+// List lists planets.
+func (p PlanetDB) List() ([]model.Planet, error) {
+	cursor, err := p.collection.Find(context.Background(), bson.M{})
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +71,17 @@ func (p PlanetDB) Insert(planet model.Planet) (primitive.ObjectID, error) {
 // FindByID finds a planet by its id.
 func (p PlanetDB) FindByID(id primitive.ObjectID) (model.Planet, error) {
 	result := p.collection.FindOne(context.Background(), bson.M{"_id": id})
+	if result.Err() != nil {
+		return model.Planet{}, result.Err()
+	}
+	var planet model.Planet
+	return planet, result.Decode(&planet)
+}
+
+// FindByName finds a planet by its name (exact match).
+func (p PlanetDB) FindByName(name string) (model.Planet, error) {
+	escaped := regexp.QuoteMeta(name)
+	result := p.collection.FindOne(context.Background(), bson.M{"name": bson.M{"$regex": primitive.Regex{Pattern: "^" + escaped + "$", Options: "i"}}})
 	if result.Err() != nil {
 		return model.Planet{}, result.Err()
 	}

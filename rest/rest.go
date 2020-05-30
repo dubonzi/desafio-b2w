@@ -1,9 +1,9 @@
 package rest
 
 import (
+	"desafio-b2w/service"
 	"encoding/json"
 	"net/http"
-	"teste-b2w/service"
 )
 
 // SendJSON encodes data as json and writes it on w.

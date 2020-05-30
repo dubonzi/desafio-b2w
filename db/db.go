@@ -2,22 +2,27 @@ package db
 
 import (
 	"context"
-	"teste-b2w/logger"
+	"desafio-b2w/logger"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const mongodbURL = "mongodb://localhost:27017/"
+var (
+	client *mongo.Client
+	mDB    *mongo.Database
 
-var client *mongo.Client
+	// DBName is the database name.
+	DBName string
 
-var mDB *mongo.Database
+	// DBUrl is the database connection string.
+	DBUrl string
+)
 
 // Open creates the initial connection to the MongoDB instance.
 func Open() {
 	var err error
-	client, err = mongo.NewClient(options.Client().ApplyURI(mongodbURL))
+	client, err = mongo.NewClient(options.Client().ApplyURI(DBUrl))
 	if err != nil {
 		logger.Fatal("db.Open", "mongo.NewClient", err)
 	}
@@ -34,6 +39,14 @@ func Open() {
 	}
 }
 
+// Close closes the database connection.
+func Close() {
+	err := client.Disconnect(context.TODO())
+	if err != nil {
+		logger.Fatal("db.Close", "client.Disconnect", err)
+	}
+}
+
 func getDB() *mongo.Database {
 	if mDB != nil {
 		return mDB
@@ -41,7 +54,7 @@ func getDB() *mongo.Database {
 	if client == nil {
 		Open()
 	}
-	mDB = client.Database("starwars")
+	mDB = client.Database(DBName)
 
 	return mDB
 }

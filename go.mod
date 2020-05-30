@@ -1,4 +1,4 @@
-module teste-b2w
+module desafio-b2w
 
 go 1.14
 

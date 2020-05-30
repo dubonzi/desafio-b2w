@@ -1,13 +1,13 @@
 package service
 
 import (
+	"desafio-b2w/db"
+	"desafio-b2w/logger"
+	"desafio-b2w/model"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"teste-b2w/db"
-	"teste-b2w/logger"
-	"teste-b2w/model"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,10 +16,10 @@ import (
 // PlanetService is the service layer structure that hold methods related to the Planet entity.
 type PlanetService struct{}
 
-// List lists planets with an optional name filter.
-func (PlanetService) List(name string) ([]model.Planet, error) {
+// List lists planets.
+func (PlanetService) List() ([]model.Planet, error) {
 	plDB := db.NewPlanetDB()
-	planets, err := plDB.List(name)
+	planets, err := plDB.List()
 	if err != nil {
 		logger.Error("PlanetService.List", "plDB.List", err)
 		return nil, ErrInternal
@@ -47,6 +47,22 @@ func (PlanetService) FindByID(id string) (model.Planet, error) {
 		return model.Planet{}, ErrInternal
 	}
 
+	return planet, nil
+}
+
+// FindByName returns a planet with the given name.
+//
+// Returns ErrNotFound if the planet doesn't exist.
+func (PlanetService) FindByName(name string) (model.Planet, error) {
+	plDB := db.NewPlanetDB()
+	planet, err := plDB.FindByName(name)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return model.Planet{}, ErrNotFound
+		}
+		logger.Error("PlanetService.FindByName", "plDB.FindByName", err, name)
+		return model.Planet{}, ErrInternal
+	}
 	return planet, nil
 }
 

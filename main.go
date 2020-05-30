@@ -2,19 +2,21 @@ package main
 
 import (
 	"context"
+	"desafio-b2w/db"
+	"desafio-b2w/logger"
+	"desafio-b2w/routes"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"teste-b2w/db"
-	"teste-b2w/logger"
-	"teste-b2w/routes"
 )
 
 const port = ":9080"
 const version = "0.1.0"
 
 func main() {
+	db.DBName = "starwars"
+	db.DBUrl = "mongodb://localhost:27017/"
 	db.Open()
 	server := http.Server{Addr: port, Handler: routes.All()}
 
@@ -29,6 +31,7 @@ func main() {
 
 	<-stop
 	log.Println("- Stopping the server -")
+	db.Close()
 	server.Shutdown(context.Background())
 	log.Println("- Server successfully stopped -")
 }

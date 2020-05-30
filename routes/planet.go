@@ -1,11 +1,11 @@
 package routes
 
 import (
+	"desafio-b2w/model"
+	"desafio-b2w/rest"
+	"desafio-b2w/service"
 	"encoding/json"
 	"net/http"
-	"teste-b2w/model"
-	"teste-b2w/rest"
-	"teste-b2w/service"
 
 	"github.com/go-chi/chi"
 )
@@ -13,7 +13,7 @@ import (
 func planets() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", listAllPlanetsHandler)
+	r.Get("/", listPlanetsHandler)
 	r.Get("/{id}", findPlanetByIDHandler)
 	r.Post("/", newPlanetHandler)
 	r.Delete("/{id}", deletePlanetHandler)
@@ -21,16 +21,23 @@ func planets() chi.Router {
 	return r
 }
 
-func listAllPlanetsHandler(w http.ResponseWriter, r *http.Request) {
+func listPlanetsHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	plService := service.PlanetService{}
-	planets, err := plService.List(name)
+
+	var err error
+	var searchResult interface{}
+
+	if name != "" {
+		searchResult, err = plService.FindByName(name)
+	} else {
+		searchResult, err = plService.List()
+	}
 	if err != nil {
 		rest.SendError(w, err)
 		return
 	}
-
-	rest.SendJSON(w, planets)
+	rest.SendJSON(w, searchResult)
 }
 
 func findPlanetByIDHandler(w http.ResponseWriter, r *http.Request) {
