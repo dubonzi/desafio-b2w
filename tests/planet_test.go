@@ -55,8 +55,11 @@ func newPlanet(t *testing.T) {
 		t.Errorf("wrong status returned by handler: expected %v but got %v", http.StatusCreated, status)
 	}
 
-	// From http://swapi.dev/api/planets/8/
-	expectedFilms := 4
+	pService := service.PlanetService{}
+	expectedFilms, err := pService.GetFilmAppearances("Naboo")
+	if err != nil {
+		t.Fatal("unable to get fil appearances for planet Naboo: ", err)
+	}
 
 	var inserted model.Planet
 	jsonDec := json.NewDecoder(recorder.Body)

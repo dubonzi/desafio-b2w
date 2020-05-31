@@ -88,7 +88,7 @@ func (ps PlanetService) Add(planet model.Planet) (model.Planet, error) {
 		return model.Planet{}, ErrDuplicatedPlanet
 	}
 
-	appearances, err := ps.getFilmAppearances(planet.Name)
+	appearances, err := ps.GetFilmAppearances(planet.Name)
 	if err != nil {
 		logger.Error("PlanetService.Add", "ps.getFilmAppearances", err, planet.Name)
 		return model.Planet{}, ErrInternal
@@ -129,7 +129,10 @@ func (PlanetService) Delete(id string) error {
 	return nil
 }
 
-func (PlanetService) getFilmAppearances(name string) (int, error) {
+// GetFilmAppearances returns the number of films a planet with `name` appeared on.
+// If multiple planets are found, the first planet from the list will be chosen.
+// Returns 0 if no planets are found.
+func (PlanetService) GetFilmAppearances(name string) (int, error) {
 	client := http.Client{}
 	resp, err := client.Get(fmt.Sprintf("https://swapi.dev/api/planets/?search=%s", name))
 	if err != nil {
