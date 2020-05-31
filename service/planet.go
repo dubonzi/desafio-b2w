@@ -15,23 +15,33 @@ import (
 
 // PlanetService is the service layer structure that hold methods related to the Planet entity.
 type PlanetService struct {
-	DB db.PlanetQuerier
+	db                 db.PlanetQuerier
+	GetFilmAppearances func(string) (int, error)
+}
+
+// PlanetServiceOptions options used to instantiate
+type PlanetServiceOptions struct {
+	Querier            db.PlanetQuerier
+	GetFilmAppearances func(string) (int, error)
 }
 
 // NewPlanetService creates a new PlanetService.
-func NewPlanetService(querier *db.PlanetQuerier) PlanetService {
+func NewPlanetService(options *PlanetServiceOptions) PlanetService {
 	s := PlanetService{}
-	if querier == nil {
-		s.DB = db.NewPlanetDB()
+	if options == nil {
+		s.db = db.NewPlanetDB()
+		s.GetFilmAppearances = GetFilmAppearances
 	} else {
-		s.DB = *querier
+		s.db = options.Querier
+		s.GetFilmAppearances = options.GetFilmAppearances
 	}
+
 	return s
 }
 
 // List lists planets.
 func (ps PlanetService) List() ([]model.Planet, error) {
-	planets, err := ps.DB.List()
+	planets, err := ps.db.List()
 	if err != nil {
 		logger.Error("PlanetService.List", "plDB.List", err)
 		return nil, ErrInternal
@@ -43,14 +53,13 @@ func (ps PlanetService) List() ([]model.Planet, error) {
 // FindByID returns a planet with the given id.
 //
 // Returns ErrNotFound if the planet doesn't exist.
-func (PlanetService) FindByID(id string) (model.Planet, error) {
+func (ps PlanetService) FindByID(id string) (model.Planet, error) {
 	oID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return model.Planet{}, ErrInvalidID
 	}
 
-	plDB := db.NewPlanetDB()
-	planet, err := plDB.FindByID(oID)
+	planet, err := ps.db.FindByID(oID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return model.Planet{}, ErrNotFound
@@ -65,9 +74,8 @@ func (PlanetService) FindByID(id string) (model.Planet, error) {
 // FindByName returns a planet with the given name.
 //
 // Returns ErrNotFound if the planet doesn't exist.
-func (PlanetService) FindByName(name string) (model.Planet, error) {
-	plDB := db.NewPlanetDB()
-	planet, err := plDB.FindByName(name)
+func (ps PlanetService) FindByName(name string) (model.Planet, error) {
+	planet, err := ps.db.FindByName(name)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return model.Planet{}, ErrNotFound
@@ -89,11 +97,10 @@ func (ps PlanetService) Add(planet model.Planet) (model.Planet, error) {
 	if planet.Terrain == "" {
 		return model.Planet{}, ErrEmptyTerrain
 	}
-	plDB := db.NewPlanetDB()
 
-	exists, err := plDB.Exists(planet.Name)
+	exists, err := ps.db.Exists(planet.Name)
 	if err != nil {
-		logger.Error("PlanetService.Add", "plDB.Exists", err, planet.Name)
+		logger.Error("PlanetService.Add", "ps.db.Exists", err, planet.Name)
 		return model.Planet{}, ErrInternal
 	}
 	if exists {
@@ -107,15 +114,15 @@ func (ps PlanetService) Add(planet model.Planet) (model.Planet, error) {
 	}
 	planet.FilmAppearances = appearances
 	planet.ID = primitive.NewObjectID()
-	id, err := plDB.Insert(planet)
+	id, err := ps.db.Insert(planet)
 	if err != nil {
-		logger.Error("PlanetService.Add", "plDB.Insert", err, planet)
+		logger.Error("PlanetService.Add", "ps.db.Insert", err, planet)
 		return model.Planet{}, ErrInternal
 	}
 
-	planet, err = plDB.FindByID(id)
+	planet, err = ps.db.FindByID(id)
 	if err != nil {
-		logger.Error("PlanetService.Add", "plDB.FindByID", err, id)
+		logger.Error("PlanetService.Add", "ps.db.FindByID", err, id)
 		return model.Planet{}, ErrInternal
 	}
 
@@ -123,13 +130,12 @@ func (ps PlanetService) Add(planet model.Planet) (model.Planet, error) {
 }
 
 // Delete removes a planet from the database.
-func (PlanetService) Delete(id string) error {
+func (ps PlanetService) Delete(id string) error {
 	oID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return ErrInvalidID
 	}
-	plDB := db.NewPlanetDB()
-	err = plDB.Delete(oID)
+	err = ps.db.Delete(oID)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return ErrNotFound
@@ -144,7 +150,7 @@ func (PlanetService) Delete(id string) error {
 // GetFilmAppearances returns the number of films a planet with `name` appeared on.
 // If multiple planets are found, the first planet from the list will be chosen.
 // Returns 0 if no planets are found.
-func (PlanetService) GetFilmAppearances(name string) (int, error) {
+func GetFilmAppearances(name string) (int, error) {
 	client := http.Client{}
 	resp, err := client.Get(fmt.Sprintf("https://swapi.dev/api/planets/?search=%s", name))
 	if err != nil {

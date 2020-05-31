@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -19,8 +20,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func TestPlanetHandlers(t *testing.T) {
-	setupDBVars()
+func TestPlanetIntegration(t *testing.T) {
+	testDBUri := os.Getenv("MONGO_TEST_DATABASE_URI")
+	testDBName := os.Getenv("MONGO_TEST_DATABASE_NAME")
+	if testDBName == "" {
+		testDBName = "starwars_testdb"
+	}
+	if testDBUri == "" {
+		testDBUri = "mongodb://localhost:27017/"
+	}
+
 	db.DBName = testDBName
 	db.DBUri = testDBUri
 
@@ -57,7 +66,7 @@ func newPlanet(t *testing.T) {
 		t.Errorf("wrong status returned by handler: expected %v but got %v", http.StatusCreated, status)
 	}
 
-	pService := service.PlanetService{}
+	pService := service.NewPlanetService(nil)
 	expectedFilms, err := pService.GetFilmAppearances("Naboo")
 	if err != nil {
 		t.Fatal("unable to get fil appearances for planet Naboo: ", err)
@@ -213,7 +222,7 @@ func deletePlanet(t *testing.T) {
 
 // insertTestPlanetData inserts a planet into the test database.
 func insertTestPlanetData(planet model.Planet) (primitive.ObjectID, error) {
-	pService := service.PlanetService{}
+	pService := service.NewPlanetService(nil)
 	inserted, err := pService.Add(planet)
 	return inserted.ID, err
 }
