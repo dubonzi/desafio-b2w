@@ -14,12 +14,24 @@ import (
 )
 
 // PlanetService is the service layer structure that hold methods related to the Planet entity.
-type PlanetService struct{}
+type PlanetService struct {
+	DB db.PlanetQuerier
+}
+
+// NewPlanetService creates a new PlanetService.
+func NewPlanetService(querier *db.PlanetQuerier) PlanetService {
+	s := PlanetService{}
+	if querier == nil {
+		s.DB = db.NewPlanetDB()
+	} else {
+		s.DB = *querier
+	}
+	return s
+}
 
 // List lists planets.
-func (PlanetService) List() ([]model.Planet, error) {
-	plDB := db.NewPlanetDB()
-	planets, err := plDB.List()
+func (ps PlanetService) List() ([]model.Planet, error) {
+	planets, err := ps.DB.List()
 	if err != nil {
 		logger.Error("PlanetService.List", "plDB.List", err)
 		return nil, ErrInternal

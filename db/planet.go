@@ -12,6 +12,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// PlanetQuerier provides methods for querying planets.
+type PlanetQuerier interface {
+	List() ([]model.Planet, error)
+	Exists(name string) (bool, error)
+	Insert(planet model.Planet) (primitive.ObjectID, error)
+	FindByID(id primitive.ObjectID) (model.Planet, error)
+	FindByName(name string) (model.Planet, error)
+	Delete(id primitive.ObjectID) error
+}
+
 // PlanetDB is a structure to acces 'planet' database records.
 type PlanetDB struct {
 	collection *mongo.Collection

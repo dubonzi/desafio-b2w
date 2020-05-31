@@ -24,7 +24,7 @@ func planets() chi.Router {
 // ListPlanetsHandler handles requests for listing/searching planets.
 func ListPlanetsHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
-	plService := service.PlanetService{}
+	plService := service.NewPlanetService(nil)
 
 	var err error
 	var searchResult interface{}
@@ -44,7 +44,7 @@ func ListPlanetsHandler(w http.ResponseWriter, r *http.Request) {
 // FindPlanetByIDHandler handles requests for finding planets by id.
 func FindPlanetByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	plService := service.PlanetService{}
+	plService := service.NewPlanetService(nil)
 	planet, err := plService.FindByID(id)
 	if err != nil {
 		rest.SendError(w, err)
@@ -62,7 +62,7 @@ func NewPlanetHandler(w http.ResponseWriter, r *http.Request) {
 		rest.SendError(w, service.ErrBadRequest)
 		return
 	}
-	plService := service.PlanetService{}
+	plService := service.NewPlanetService(nil)
 	planet, err = plService.Add(planet)
 	if err != nil {
 		rest.SendError(w, err)
@@ -76,7 +76,7 @@ func NewPlanetHandler(w http.ResponseWriter, r *http.Request) {
 // DeletePlanetHandler handles requests for deleting planets.
 func DeletePlanetHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
-	plService := service.PlanetService{}
+	plService := service.NewPlanetService(nil)
 	err := plService.Delete(id)
 	if err != nil {
 		rest.SendError(w, err)
