@@ -11,8 +11,8 @@ services:
       - starwars_network
 
   starwars_api:
+    build: .
     container_name: starwars_api
-    image: starwars_api
     depends_on:
       - starwars_db
     restart: always
