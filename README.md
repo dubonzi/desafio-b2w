@@ -11,6 +11,13 @@
 - [The API](#the-api)
 - [Tests](#tests)
 
-# The Project
+# About
 
 This project is a simple REST API created during the selection process for a position on B2W Digital. It provides information about planets from the Star Wars movies. It interacts with SWAPI ([https://swapi.co/](https://swapi.co/)), a public API with data from the franchise.
+
+# Technologies
+
+- [Golang 1.14](https://golang.org)
+- [MongoDB 4.2](https://www.mongodb.com/)
+- [Docker 19.03.11](https://www.docker.com/)
+- [Docker Compose 1.24.0-rc1](https://docs.docker.com/compose/)
