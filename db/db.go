@@ -11,8 +11,8 @@ import (
 var (
 	mDB *mongo.Database
 
-	// Client is the client connected to the MongoDB instance.
-	Client *mongo.Client
+	// client is the client connected to the MongoDB instance.
+	client *mongo.Client
 
 	// DBName is the database name.
 	DBName string
@@ -23,47 +23,48 @@ var (
 
 // Open creates the initial connection to the MongoDB instance.
 func Open() *mongo.Client {
-	if Client != nil {
-		return Client
+	if client != nil {
+		return client
 	}
 	var err error
-	Client, err = mongo.NewClient(options.Client().ApplyURI(DBUri))
+	client, err = mongo.NewClient(options.Client().ApplyURI(DBUri))
 	if err != nil {
 		logger.Fatal("db.Open", "mongo.NewClient", err)
 	}
 
-	err = Client.Connect(context.TODO())
+	err = client.Connect(context.TODO())
 	if err != nil {
-		logger.Fatal("db.Open", "Client.Connect", err)
+		logger.Fatal("db.Open", "client.Connect", err)
 	}
 
 	// Check the connection
-	Client.Ping(context.TODO(), nil)
+	client.Ping(context.TODO(), nil)
 	if err != nil {
-		logger.Fatal("db.Open", "Client.Ping", err)
+		logger.Fatal("db.Open", "client.Ping", err)
 	}
 
-	return Client
+	return client
 }
 
 // Close closes the database connection.
 func Close() {
-	err := Client.Disconnect(context.TODO())
+	err := client.Disconnect(context.TODO())
 	if err != nil {
-		logger.Fatal("db.Close", "Client.Disconnect", err)
+		logger.Fatal("db.Close", "client.Disconnect", err)
 	}
 }
 
-func getDB() *mongo.Database {
+// GetDB returns the database handle.
+func GetDB() *mongo.Database {
 	if mDB != nil {
 		return mDB
 	}
 
-	if Client == nil {
+	if client == nil {
 		Open()
 	}
 
-	mDB = Client.Database(DBName)
+	mDB = client.Database(DBName)
 
 	return mDB
 }

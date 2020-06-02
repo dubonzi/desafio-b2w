@@ -4,6 +4,7 @@ package tests
 
 import (
 	"context"
+	"desafio-b2w/conf"
 	"desafio-b2w/db"
 	"desafio-b2w/model"
 	"desafio-b2w/routes"
@@ -12,7 +13,6 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 
@@ -21,17 +21,9 @@ import (
 )
 
 func TestPlanetIntegration(t *testing.T) {
-	testDBUri := os.Getenv("MONGO_TEST_DATABASE_URI")
-	testDBName := os.Getenv("MONGO_TEST_DATABASE_NAME")
-	if testDBName == "" {
-		testDBName = "starwars_testdb"
-	}
-	if testDBUri == "" {
-		testDBUri = "mongodb://localhost:27017/"
-	}
-
-	db.DBName = testDBName
-	db.DBUri = testDBUri
+	conf.Load()
+	db.DBName = conf.MongoDBTestDatabaseName()
+	db.DBUri = conf.MongoDBURI()
 
 	db.Open()
 
@@ -44,7 +36,7 @@ func TestPlanetIntegration(t *testing.T) {
 }
 
 func newPlanet(t *testing.T) {
-	db.Client.Database(db.DBName).Collection("planets").Drop(context.Background())
+	db.GetDB().Collection("planets").Drop(context.Background())
 
 	testPlanet := `{
 		"name":    "Naboo",
@@ -88,7 +80,7 @@ func newPlanet(t *testing.T) {
 }
 
 func listAllPlanets(t *testing.T) {
-	db.Client.Database(db.DBName).Collection("planets").Drop(context.Background())
+	db.GetDB().Collection("planets").Drop(context.Background())
 
 	_, err := insertTestPlanetData(model.Planet{
 		Name:    "Kamino",
@@ -143,7 +135,7 @@ func listAllPlanets(t *testing.T) {
 }
 
 func findPlanetByID(t *testing.T) {
-	db.Client.Database(db.DBName).Collection("planets").Drop(context.Background())
+	db.GetDB().Collection("planets").Drop(context.Background())
 
 	insertedID, err := insertTestPlanetData(model.Planet{
 		Name:    "Kamino",
@@ -189,7 +181,7 @@ func findPlanetByID(t *testing.T) {
 }
 
 func deletePlanet(t *testing.T) {
-	db.Client.Database(db.DBName).Collection("planets").Drop(context.Background())
+	db.GetDB().Collection("planets").Drop(context.Background())
 
 	insertedID, err := insertTestPlanetData(model.Planet{
 		Name:    "Kamino",

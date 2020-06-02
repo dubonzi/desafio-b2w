@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"desafio-b2w/conf"
 	"desafio-b2w/db"
 	"desafio-b2w/logger"
 	"desafio-b2w/routes"
@@ -15,9 +16,11 @@ const port = ":9080"
 const version = "0.1.0"
 
 func main() {
-	db.DBName = "starwars"
-	db.DBUri = "mongodb://localhost:27017/"
+	conf.Load()
+	db.DBUri = conf.MongoDBURI()
+	db.DBName = conf.MongoDBDatabaseName()
 	db.Open()
+
 	server := http.Server{Addr: port, Handler: routes.All()}
 
 	stop := make(chan os.Signal, 1)

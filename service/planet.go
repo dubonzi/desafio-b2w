@@ -19,7 +19,7 @@ type PlanetService struct {
 	GetFilmAppearances func(string) (int, error)
 }
 
-// PlanetServiceOptions options used to instantiate
+// PlanetServiceOptions options used to instantiate a PlanetService.
 type PlanetServiceOptions struct {
 	Querier            db.PlanetQuerier
 	GetFilmAppearances func(string) (int, error)

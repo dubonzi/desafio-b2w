@@ -29,7 +29,7 @@ type PlanetDB struct {
 
 // NewPlanetDB creates a new PlanetDB.
 func NewPlanetDB() PlanetDB {
-	p := PlanetDB{getDB().Collection("planets")}
+	p := PlanetDB{GetDB().Collection("planets")}
 	return p
 }
 
