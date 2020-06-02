@@ -1,11 +1,15 @@
 package conf
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 var (
 	mongoDBURI              = "mongodb://localhost:27017/"
 	mongoDBDatabaseName     = "starwars"
 	mongoDBTestDatabaseName = "starwars_testdb"
+	apiPort                 = "9080"
 )
 
 // Load config variables from the environment.
@@ -18,6 +22,9 @@ func Load() {
 	}
 	if os.Getenv("MONGODB_TEST_DATABASE_NAME") != "" {
 		mongoDBTestDatabaseName = os.Getenv("MONGODB_TEST_DATABASE_NAME")
+	}
+	if os.Getenv("API_PORT") != "" {
+		apiPort = os.Getenv("API_PORT")
 	}
 
 }
@@ -38,4 +45,10 @@ func MongoDBDatabaseName() string {
 //	Default: "starwars_testdb"
 func MongoDBTestDatabaseName() string {
 	return mongoDBTestDatabaseName
+}
+
+// APIPort returns the port for the http server.
+//	Default: :9080
+func APIPort() string {
+	return fmt.Sprintf(":" + apiPort)
 }

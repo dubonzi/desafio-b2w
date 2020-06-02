@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"desafio-b2w/logger"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -32,13 +33,16 @@ func Open() *mongo.Client {
 		logger.Fatal("db.Open", "mongo.NewClient", err)
 	}
 
-	err = client.Connect(context.TODO())
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*10)
+	defer cancel()
+
+	err = client.Connect(ctx)
 	if err != nil {
 		logger.Fatal("db.Open", "client.Connect", err)
 	}
 
 	// Check the connection
-	client.Ping(context.TODO(), nil)
+	err = client.Ping(ctx, nil)
 	if err != nil {
 		logger.Fatal("db.Open", "client.Ping", err)
 	}

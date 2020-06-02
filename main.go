@@ -12,7 +12,6 @@ import (
 	"os/signal"
 )
 
-const port = ":9080"
 const version = "0.1.0"
 
 func main() {
@@ -21,14 +20,14 @@ func main() {
 	db.DBName = conf.MongoDBDatabaseName()
 	db.Open()
 
-	server := http.Server{Addr: port, Handler: routes.All()}
+	server := http.Server{Addr: conf.APIPort(), Handler: routes.All()}
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
 	go func() {
 		log.Printf("- B2W Planets API v%s -", version)
-		log.Printf("- Listening on port %s -", port)
+		log.Printf("- Listening on port %s -", conf.APIPort())
 		logger.Fatal("main", "server.ListenAndServe", server.ListenAndServe())
 	}()
 

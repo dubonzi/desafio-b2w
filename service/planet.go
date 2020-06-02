@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -152,6 +153,7 @@ func (ps PlanetService) Delete(id string) error {
 // Returns 0 if no planets are found.
 func GetFilmAppearances(name string) (int, error) {
 	client := http.Client{}
+	name = url.QueryEscape(name)
 	resp, err := client.Get(fmt.Sprintf("https://swapi.dev/api/planets/?search=%s", name))
 	if err != nil {
 		return 0, err
