@@ -7,8 +7,9 @@ import (
 )
 
 // SendJSON encodes data as json and writes it on w.
-func SendJSON(w http.ResponseWriter, data interface{}) error {
+func SendJSON(w http.ResponseWriter, data interface{}, status int) error {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
 	encoder := json.NewEncoder(w)
 	err := encoder.Encode(data)
 	if err != nil {

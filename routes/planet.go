@@ -38,7 +38,7 @@ func ListPlanetsHandler(w http.ResponseWriter, r *http.Request) {
 		rest.SendError(w, err)
 		return
 	}
-	rest.SendJSON(w, searchResult)
+	rest.SendJSON(w, searchResult, http.StatusOK)
 }
 
 // FindPlanetByIDHandler handles requests for finding planets by id.
@@ -50,7 +50,7 @@ func FindPlanetByIDHandler(w http.ResponseWriter, r *http.Request) {
 		rest.SendError(w, err)
 		return
 	}
-	rest.SendJSON(w, planet)
+	rest.SendJSON(w, planet, http.StatusOK)
 }
 
 // NewPlanetHandler handles requests for inserting new planets.
@@ -69,8 +69,7 @@ func NewPlanetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	rest.SendJSON(w, planet)
+	rest.SendJSON(w, planet, http.StatusCreated)
 }
 
 // DeletePlanetHandler handles requests for deleting planets.
