@@ -22,6 +22,7 @@ services:
       - starwars_network
     environment:
       API_PORT: 9080
+      SWAPI_URL: https://swapi.dev/api
       MONGODB_URI: mongodb://starwars_db:27017/
       MONGODB_DATABASE_NAME: starwars
       MONGODB_TEST_DATABASE_NAME: starwars_testdb

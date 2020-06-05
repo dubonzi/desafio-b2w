@@ -1,6 +1,7 @@
 package service
 
 import (
+	"desafio-b2w/conf"
 	"desafio-b2w/db"
 	"desafio-b2w/logger"
 	"desafio-b2w/model"
@@ -154,7 +155,7 @@ func (ps PlanetService) Delete(id string) error {
 func GetFilmAppearances(name string) (int, error) {
 	client := http.Client{}
 	name = url.QueryEscape(name)
-	resp, err := client.Get(fmt.Sprintf("https://swapi.dev/api/planets/?search=%s", name))
+	resp, err := client.Get(fmt.Sprintf("%s/planets/?search=%s", conf.SwapiURL(), name))
 	if err != nil {
 		return 0, err
 	}

@@ -10,6 +10,7 @@ var (
 	mongoDBDatabaseName     = "starwars"
 	mongoDBTestDatabaseName = "starwars_testdb"
 	apiPort                 = "9080"
+	swapiURL                = "https://swapi.dev/api"
 )
 
 // Load config variables from the environment.
@@ -25,6 +26,9 @@ func Load() {
 	}
 	if os.Getenv("API_PORT") != "" {
 		apiPort = os.Getenv("API_PORT")
+	}
+	if os.Getenv("SWAPI_URL") != "" {
+		swapiURL = os.Getenv("SWAPI_URL")
 	}
 
 }
@@ -51,4 +55,10 @@ func MongoDBTestDatabaseName() string {
 //	Default: :9080
 func APIPort() string {
 	return fmt.Sprintf(":" + apiPort)
+}
+
+// SwapiURL base url for the swapi api.
+//	Default: https://swapi.dev/api
+func SwapiURL() string {
+	return swapiURL
 }

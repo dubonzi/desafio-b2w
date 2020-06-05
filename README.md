@@ -25,7 +25,7 @@
 
 # About
 
-This project is a simple REST API created during the selection process for a position on B2W Digital. It provides information about planets from the Star Wars movies. It interacts with SWAPI ([https://swapi.co/](https://swapi.co/)), a public API with data from the franchise.
+This project is a simple REST API created during the selection process for a position on B2W Digital. It provides information about planets from the Star Wars movies. It interacts with SWAPI ([https://swapi.dev/](https://swapi.dev/)), a public API with data from the franchise.
 
 # Technologies
 
@@ -42,6 +42,7 @@ The project can be run by compiling the source code and/or using Docker.
 | Name                       | Default                    | Description                                       |
 | -------------------------- | -------------------------- | ------------------------------------------------- |
 | API_PORT                   | 9080                       | Port used by the API                              |
+| SWAPI_URL                  | https://swapi.dev/api      | Base url for the SWAPI api.                       |
 | MONGODB_URI                | mongodb://localhost:27017/ | URI to your MongoDB server                        |
 | MONGODB_DATABASE_NAME      | starwars                   | Database name to be used by the API               |
 | MONGODB_TEST_DATABASE_NAME | starwars_testdb            | Database name to be used by the integration tests |
@@ -62,6 +63,8 @@ Now simply run the resulting binary:
 
 ```./starwars_api```
 
+The api will be avaliable at: http://localhost:9080/api/
+
 To modify the starting parameters such as port and database uri, add the environment variables from the table above before the binary in the run command:
 
 ```MONGODB_URI='mongodb://localhost:27017/' API_PORT='9500' ./starwars_api```
@@ -77,6 +80,8 @@ At the root folder of this repository, run the command:
 To stop and remove the containers, run ```docker-compose down``` .
 
 To modify environment variables, edit the ```docker-compose.yaml``` file.
+
+The api will be avaliable at: http://localhost:9080/api/
 
 # Tests
 
