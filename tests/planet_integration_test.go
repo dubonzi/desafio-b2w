@@ -61,7 +61,7 @@ func newPlanet(t *testing.T) {
 	pService := service.NewPlanetService(nil)
 	expectedFilms, err := pService.GetFilmAppearances("Naboo")
 	if err != nil {
-		t.Fatal("unable to get fil appearances for planet Naboo: ", err)
+		t.Fatal("unable to get film appearances for planet Naboo: ", err)
 	}
 
 	var inserted model.Planet
