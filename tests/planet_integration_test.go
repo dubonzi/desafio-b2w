@@ -1,4 +1,4 @@
-// +build integration
+//go:build integration
 
 package tests
 
@@ -16,7 +16,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
